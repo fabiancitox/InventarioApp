@@ -40,14 +40,54 @@ public class ProductoServlet extends HttpServlet {
         try {
             if ("delete".equals(action)) {
                 eliminarProducto(req, res);
+            } else if ("edit".equals(action)) {
+                String codigo = req.getParameter("codigo");
+                Producto producto = facade.buscarPorCodigo(codigo);
+                if (producto != null) {
+                    req.setAttribute("productos", lista);
+                    req.setAttribute("productoEditar", facade.buscarPorCodigo(codigo));
+                    req.getRequestDispatcher("view-productos.jsp").forward(req, res);
+                }
+                req.setAttribute("mensajeBean.textoError", "El codigo no existe.");
+                req.getRequestDispatcher("view-productos.jsp").forward(req, res);
+            } else if ("update".equals(action)) {
+                editarProducto(req, res);
             } else {
                 crearProducto(req, res);
             }
         } catch (Exception e) {
             req.setAttribute("productos", lista);
-            req.setAttribute("error", "Error en la operación: " + e.getMessage());
+            req.setAttribute("mensajeBean.textoError", "Error interno, intente nuevamente.");
             req.getRequestDispatcher("view-productos.jsp").forward(req, res);
         }
+    }
+
+    private void editarProducto(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        // Recibo parámetros
+        String codigo = req.getParameter("codigo");
+        String id = req.getParameter("id");
+        String nombre = req.getParameter("nombre");
+        String categoria = req.getParameter("categoria");
+        double precio = Double.parseDouble(req.getParameter("precio"));
+        int stock = Integer.parseInt(req.getParameter("stock"));
+        boolean activo = req.getParameter("activo") != null;
+
+        // Creación del objeto producto
+        Producto producto = new Producto();
+        producto.setId(Integer.parseInt(id));
+        producto.setCodigo(codigo);
+        producto.setNombre(nombre);
+        producto.setCategoria(categoria);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+        producto.setActivo(activo);
+
+        // Guardar producto
+        facade.editar(producto);
+        lista = facade.listar();
+        req.setAttribute("productos", lista);
+        req.setAttribute("mensajeBean.textoInfo", "Producto editado correctamente.");
+        req.getRequestDispatcher("view-productos.jsp").forward(req, res);
     }
 
     private void crearProducto(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, Exception {

@@ -60,6 +60,12 @@
                                 </span>
                             </td>
                             <td class="py-3 px-5">
+                                <form action="${pageContext.request.contextPath}/productos" method="post">
+                                    <input type="hidden" name="action" value="edit">
+                                    <input type="hidden" name="codigo" value="${producto.codigo}">
+                                    <button type="submit" class="text-blue-600 hover:text-blue-800 font-medium">Editar</button>
+                                </form>
+
                                 <form action="${pageContext.request.contextPath}/productos" method="post" onsubmit="return confirm('¿Deseas eliminar este producto?');">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="codigo" value="${producto.codigo}">
@@ -76,49 +82,67 @@
         <!-- Formulario -->
         <section class="w-11/12 md:w-3/4 lg:w-2/3 bg-white rounded-2xl shadow-lg p-8">
             <h2 class="text-2xl font-semibold mb-6 text-gray-900">Agregar Producto</h2>
-            <form method="post" action="${pageContext.request.contextPath}/productos" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form method="post" action="${pageContext.request.contextPath}/productos"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <input type="hidden" name="action" value="${empty productoEditar ? 'insert' : 'update'}">
+                <input type="hidden" name="id" value="${empty productoEditar ? '0' : productoEditar.id}">
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Código</label>
-                    <input name="codigo" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input name="codigo"
+                           value="${productoEditar.codigo}"
+                           class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    ${not empty productoEditar ? 'readonly' : ''}>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                    <input name="nombre" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input name="nombre"
+                           value="${productoEditar.nombre}"
+                           class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-                    <select name="categoria" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option>Electronicos</option>
-                        <option>Accesorios</option>
-                        <option>Muebles</option>
-                        <option>Ropa</option>
+                    <select name="categoria"
+                            class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option ${productoEditar.categoria == 'Electronicos' ? 'selected' : ''}>Electronicos</option>
+                        <option ${productoEditar.categoria == 'Accesorios' ? 'selected' : ''}>Accesorios</option>
+                        <option ${productoEditar.categoria == 'Muebles' ? 'selected' : ''}>Muebles</option>
+                        <option ${productoEditar.categoria == 'Ropa' ? 'selected' : ''}>Ropa</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Precio</label>
-                    <input name="precio" type="number" step="0.01" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input name="precio" type="number" step="0.01"
+                           value="${productoEditar.precio}"
+                           class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                    <input name="stock" type="number" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input name="stock" type="number"
+                           value="${productoEditar.stock}"
+                           class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <div class="flex items-center gap-2 mt-6">
-                    <input name="activo" type="checkbox" checked class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <input name="activo" type="checkbox"
+                    ${productoEditar.activo ? 'checked' : ''}
+                           class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                     <label class="text-sm text-gray-700">Activo</label>
                 </div>
 
                 <div class="md:col-span-2 flex justify-end mt-4">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200 shadow-sm">
-                        Guardar
+                    <button type="submit"
+                            class="${empty productoEditar ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white px-6 py-2 rounded-lg font-medium transition duration-200 shadow-sm">
+                        ${empty productoEditar ? 'Guardar' : 'Actualizar'}
                     </button>
                 </div>
             </form>
+
         </section>
 
     </body>

@@ -140,4 +140,36 @@ public class ProductoDAO {
             ps.executeUpdate();
         }
     }
+
+    /**
+     * Actualiza los datos de un producto existente en la base de datos.
+     *
+     * <p>Ejecuta una sentencia SQL que modifica los valores de las columnas
+     * <strong>codigo</strong>, <strong>nombre</strong>, <strong>categoria</strong>,
+     * <strong>precio</strong>, <strong>stock</strong> y <strong>activo</strong>
+     * del registro cuyo <strong>id</strong> coincide con el del producto proporcionado.
+     *
+     * <p>Si no existe un producto con el ID especificado, la operación no afectará ninguna fila.
+     *
+     * @param p objeto {@link Producto} que contiene los nuevos valores y el ID del producto a actualizar.
+     * @throws SQLException si ocurre un error al ejecutar la consulta SQL.
+     */
+    public void editar(Producto p) throws SQLException {
+        // Consulta SQL para actualizar un producto existente
+        String sql = "UPDATE productos SET codigo = ?, nombre = ?, categoria = ?, precio = ?, stock = ?, activo = ? WHERE id = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            // Asignar los nuevos valores del producto
+            ps.setString(1, p.getCodigo());
+            ps.setString(2, p.getNombre());
+            ps.setString(3, p.getCategoria());
+            ps.setDouble(4, p.getPrecio());
+            ps.setInt(5, p.getStock());
+            ps.setBoolean(6, p.getActivo());
+            ps.setInt(7, p.getId()); // ID del producto a editar
+
+            // Ejecutar la actualización
+            ps.executeUpdate();
+        }
+    }
 }

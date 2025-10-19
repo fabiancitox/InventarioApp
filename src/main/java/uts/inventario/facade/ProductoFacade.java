@@ -83,4 +83,30 @@ public class ProductoFacade {
     }
 }
 
+    public void editar(Producto p) throws Exception {
+        try {
+            validar(p);
+        } catch (Exception e) {
+            mensajeBean.setTextoError(e.getMessage());
+            return;
+        }
+        try {
+            //Editar el producto
+            dao.editar(p);
+            mensajeBean.setTextoInfo("Producto editado con éxito");
+        } catch (SQLException e) {
+            mensajeBean.setTextoError("Error al insertar el producto en la base de datos");
+        }
+
+    }
+
+    public Producto buscarPorCodigo(String codigo) throws Exception {
+        try {
+            return dao.buscarPorCodigo(codigo).orElse(null);
+        } catch (SQLException e) {
+            mensajeBean.setTextoError("Error al buscar el producto en la base de datos");
+            return null;
+        }
+    }
+
 }
