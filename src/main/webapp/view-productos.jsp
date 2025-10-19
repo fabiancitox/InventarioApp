@@ -60,7 +60,7 @@
                                 </span>
                             </td>
                             <td class="py-3 px-5">
-                                <form action="${pageContext.request.contextPath}/productos" method="post">
+                                <form action="${pageContext.request.contextPath}/productos" method="post" onsubmit="return confirm('¿Deseas eliminar este producto?');">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="codigo" value="${producto.codigo}">
                                     <button type="submit" class="text-red-600 hover:text-red-800 font-medium">Eliminar</button>

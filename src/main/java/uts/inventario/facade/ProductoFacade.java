@@ -62,7 +62,25 @@ public class ProductoFacade {
         }
     }
 
-    public void eliminar(int id) throws Exception {
+    public void eliminar(String codigo) throws Exception {
+    try {
+        if (codigo == null || codigo.isEmpty()) {
+            mensajeBean.setTextoError("Código de producto no válido");
+            return;
+        }
 
+        if (!dao.existePorCodigo(codigo)) {
+            mensajeBean.setTextoError("No existe un producto con el código especificado");
+            return;
+        }
+
+        
+        dao.eliminarPorId(dao.buscarPorCodigo(codigo).get().getId());
+        mensajeBean.setTextoInfo("Producto eliminado correctamente");
+    } catch (SQLException e) {
+        mensajeBean.setTextoError("Error al eliminar el producto de la base de datos");
+        throw e;
     }
+}
+
 }

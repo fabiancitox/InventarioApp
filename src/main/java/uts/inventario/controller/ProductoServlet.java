@@ -35,33 +35,68 @@ public class ProductoServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String action = req.getParameter("action");
+
         try {
-            //Recibo parámetros
-            String codigo = req.getParameter("codigo");
-            String nombre = req.getParameter("nombre");
-            String categoria = req.getParameter("categoria");
-            double precio = Double.parseDouble(req.getParameter("precio"));
-            int stock = Integer.parseInt(req.getParameter("stock"));
-            boolean activo = req.getParameter("activo") != null;
-
-            //creación del objeto producto
-            Producto producto = new Producto();
-            producto.setCodigo(codigo);
-            producto.setNombre(nombre);
-            producto.setCategoria(categoria);
-            producto.setPrecio(precio);
-            producto.setStock(stock);
-            producto.setActivo(activo);
-
-            facade.crear(producto); //Creación del producto
-            lista = facade.listar(); //Consultar la base de datos
-            req.setAttribute("productos", lista);
-            req.getRequestDispatcher("view-productos.jsp").forward(req, res);
+            if ("delete".equals(action)) {
+                eliminarProducto(req, res);
+            } else {
+                crearProducto(req, res);
+            }
         } catch (Exception e) {
             req.setAttribute("productos", lista);
+            req.setAttribute("error", "Error en la operación: " + e.getMessage());
             req.getRequestDispatcher("view-productos.jsp").forward(req, res);
         }
+    }
 
+    private void crearProducto(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, Exception {
+        // Recibo parámetros
+        String codigo = req.getParameter("codigo");
+        String nombre = req.getParameter("nombre");
+        String categoria = req.getParameter("categoria");
+        double precio = Double.parseDouble(req.getParameter("precio"));
+        int stock = Integer.parseInt(req.getParameter("stock"));
+        boolean activo = req.getParameter("activo") != null;
+
+        // Creación del objeto producto
+        Producto producto = new Producto();
+        producto.setCodigo(codigo);
+        producto.setNombre(nombre);
+        producto.setCategoria(categoria);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+        producto.setActivo(activo);
+
+        // Guardar producto
+        facade.crear(producto);
+        lista = facade.listar();
+        req.setAttribute("productos", lista);
+        req.setAttribute("mensajeBean.textoInfo", "Producto agregado correctamente.");
+        req.getRequestDispatcher("view-productos.jsp").forward(req, res);
+    }
+    
+    private void eliminarProducto(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String codigo = req.getParameter("codigo");
+
+        
+        if (codigo == null || codigo.isEmpty()) {
+            req.setAttribute("error", "Codigo de producto no valido");
+            req.getRequestDispatcher("view-productos.jsp").forward(req, res);
+            return;
+        }
+
+        try {
+            facade.eliminar(codigo);
+            lista = facade.listar();
+            req.setAttribute("productos", lista);
+            req.setAttribute("mensajeBean.textoInfo", "Producto eliminado correctamente.");
+        } catch (Exception e) {
+            req.setAttribute("productos", lista);
+            req.setAttribute("mensajeBean.textoError", "Error al eliminar el producto: " + e.getMessage());
+        }
+
+        req.getRequestDispatcher("view-productos.jsp").forward(req, res);
     }
 
 }
